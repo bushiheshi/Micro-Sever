@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="doctor" />
+        <module name="MicroGateWay" />
+        <module name="notification" />
+        <module name="administrator" />
+        <module name="MedicalAppointment" />
+        <module name="patient" />
+        <module name="MicroRegister" />
+        <module name="appointment" />
+        <module name="DatabaseMigration" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="Administrator" target="17" />
+      <module name="Migration" target="17" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Administrator" options="-parameters" />
+      <module name="DatabaseMigration" options="-parameters" />
+      <module name="MedicalAppointment" options="-parameters" />
+      <module name="MicroGateWay" options="-parameters" />
+      <module name="MicroRegister" options="-parameters" />
+      <module name="Migration" options="-parameters" />
+      <module name="administrator" options="-parameters" />
+      <module name="appointment" options="-parameters" />
+      <module name="doctor" options="-parameters" />
+      <module name="notification" options="-parameters" />
+      <module name="patient" options="-parameters" />
+    </option>
+  </component>
+</project>

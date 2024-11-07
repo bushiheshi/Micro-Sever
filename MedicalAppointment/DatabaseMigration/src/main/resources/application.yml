@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:mysql://121.40.197.3:3306/medicalappointment?useSSL=false&autoReconnect=true&characterEncoding=utf8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: ll040623
+  flyway:
+    enabled: true
+    encoding: UTF-8
+    locations: classpath:db/migration
+    validate-on-migrate: true
+    sql-migration-prefix: V
+    baseline-version: 1
+    sqlMigrationSeparator: __
+    sql-migration-suffixes: .sql
+    baseline-on-migrate: true
+    out-of-order: true
+    clean-on-validation-error: true
+    clean-disabled: false

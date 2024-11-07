@@ -1,0 +1,23 @@
+server:
+  port: 10010
+# 应用名称：client
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      mvc:
+        routes:
+          - id: test0
+            uri: http://localhost:8083/administrator/test0
+            predicates:
+              - Path=/administrator/test0/**
+            filters:
+              - StripPrefix=0
+
+# 注册到我们本地的eureka注册中心，端口是8080
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8080/eureka/
+
