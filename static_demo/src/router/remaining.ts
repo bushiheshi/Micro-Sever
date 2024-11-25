@@ -1,3 +1,9 @@
+/*
+ * @Date: 2024-11-20 20:20:29
+ * @LastEditors: shubingsun 952217382@qq.com
+ * @LastEditTime: 2024-11-20 20:47:24
+ * @FilePath: \Micro-Sever\static_demo\src\router\remaining.ts
+ */
 export const remainingRouter: AppRouteRecordRaw[] = [
     // 路由重定向
     {
@@ -16,6 +22,16 @@ export const remainingRouter: AppRouteRecordRaw[] = [
         },
         component: () => import('@/components/Layout/index.vue')
     },
+    {
+        path:'/home',
+        name:'home',
+        component:()=>import('@/views/HomePage/index.vue'),
+        meta: {
+            title: '首页',
+            icon: 'home',
+            hidden: true
+        },
+    }
 
 
 ]
