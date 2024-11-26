@@ -175,7 +175,9 @@
 <<script>
 import {ref,onBeforeMount,onMounted} from 'vue';
 import axios  from 'axios';
-import ElMessage from 'element-plus';
+import {ElMessage} from 'element-plus';
+import router from '@/router';
+
 export default {
     setup() {
         const loginLoading = ref(false);
@@ -281,6 +283,10 @@ export default {
         onBeforeMount(() => {
         loginLoading.value = false;
         signUploading.value = false;
+        const data = localStorage.getItem('userData');
+        if (data != null){
+            router.push('/login');
+        }
         });
 
         onMounted(() => {
@@ -306,26 +312,33 @@ export default {
             const params = {
                 "email":loginForm.value.mail,
                 "password":loginForm.value.password
-            }
+            };
             axios.post(loginApi,params)
                 .then(response => {
                 // TODO：成功登录
                 if(response.status == 200){
-                    console.log("成功登录")
+                    console.log("成功登录");
+                    // 保存已登录信息
+                    localStorage.setItem('userData',response.data);
+                    setTimeout(() => {
+                        ElMessage.success("成功登录");
+                        loginLoading.value = false;
+                    }, 500);
+                    // 跳转主页
+                    router.push('/login');
+                    location.reload();
                 }
                 })
-                .catch(error => {
-                if(error.response && error.response.status === 404){
-                    console.log("404")
-                }else{
-                    console.log("其他错误")
-                }
-                });
+                .catch(
+                    error => {
+                        console.log("登录失败");
+                        alert("邮箱或密码错误，请重试");
+                        loginForm.value.mail = "";
+                        loginForm.value.password = "";
+                        loginLoading.value = false;
+                    }
+                );
                 
-            setTimeout(() => {
-                ElMessage.success("登录成功");
-                loginLoading.value = false;
-            }, 500);
             }
         });
         };
