@@ -23,6 +23,15 @@ export const remainingRouter: AppRouteRecordRaw[] = [
         component: () => import('@/components/Layout/index.vue')
     },
     {
+        path: '/loginOrSignup',
+        name: 'loginOrSignup',
+        meta: {
+            title: '登录注册',
+            hidden: true
+        },
+        component: () => import('@/views/LoginOrSignup/index.vue')
+    },
+    {
         path:'/home',
         name:'home',
         component:()=>import('@/views/HomePage/index.vue'),

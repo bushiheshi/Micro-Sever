@@ -6,6 +6,7 @@ import router from "@/router/index";
 import pinia from "@/stores/index"
 import './assets/styles/reset.css'
 import './assets/styles/var.css'
+
 const app = createApp(App)
 
 app.use(pinia)
