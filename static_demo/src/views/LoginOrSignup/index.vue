@@ -283,7 +283,7 @@ export default {
         onBeforeMount(() => {
         loginLoading.value = false;
         signUploading.value = false;
-        const data = localStorage.getItem('userData');
+        const data = localStorage.getItem('microData');
         if (data != null){
             router.push('/login');
         }
@@ -319,7 +319,7 @@ export default {
                 if(response.status == 200){
                     console.log("成功登录");
                     // 保存已登录信息
-                    localStorage.setItem('userData',response.data);
+                    localStorage.setItem('microData',response.data);
                     setTimeout(() => {
                         ElMessage.success("成功登录");
                         loginLoading.value = false;
