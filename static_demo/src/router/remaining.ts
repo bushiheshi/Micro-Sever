@@ -13,10 +13,10 @@ export const remainingRouter: AppRouteRecordRaw[] = [
         meta: {}
     },
     {
-        path: '/login',
-        name: 'login',
+        path: '/patient',
+        name: 'patient',
         meta: {
-            title: '主页',
+            title: '患者',
             icon: 'StarFilled',
             hidden: true
         },
@@ -34,7 +34,7 @@ export const remainingRouter: AppRouteRecordRaw[] = [
     {
         path: '/home',
         name: 'home',
-        component: () => import('@/views/HomePage/index.vue'),
+        component: () => import('@/views/manager/index.vue'),
         meta: {
             title: '首页',
             icon: 'home',
@@ -44,7 +44,7 @@ export const remainingRouter: AppRouteRecordRaw[] = [
     {
         path: '/doctor',
         name: 'doctor',
-        component: () => import('@/views/doctor/doctor.vue'),
+        component: () => import('@/doctor/doctor.vue'),
         meta: {
             title: '医生端',
             icon: 'doctor',
