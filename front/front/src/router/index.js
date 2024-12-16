@@ -5,6 +5,7 @@ import {
 import store from '@/store/index.js'
 
 import managerHome from '../views/manager/managerHome.vue'
+import login from '../views/patient/login.vue'
 
 const routers=[
     {
@@ -14,6 +15,15 @@ const routers=[
         meta:{
             title: "管理首页", // 用于设置页面标题或显示在面包屑导航中
             requiresAuth: true // 表示该路由需要用户认证
+        }
+    },
+    {
+        path:"/login",
+        name:"login",
+        component:login,
+        meta:{
+            title: "登录页面", 
+            requiresAuth: false // 表示该路由需要用户认证
         }
     }
 ]

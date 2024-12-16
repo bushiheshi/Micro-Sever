@@ -61,7 +61,7 @@
             <el-input v-model="signUpForm.inputVerificationCode" placeholder="验证码" />
             </el-form-item>
         </div>
-        <el-button type="Success" :loading="sendloading" @click="SendMail" class="btn form" round>
+        <el-button type="success" :loading="sendloading" @click="SendMail" class="btn form" round>
             {{sendloading ? "已发送" : "发送验证码"}}
         </el-button>
         <div class="input-field">
@@ -176,7 +176,7 @@
 import {ref,onBeforeMount,onMounted} from 'vue';
 import axios  from 'axios';
 import {ElMessage} from 'element-plus';
-import router from '@/router';
+import {router} from '../../router';
 
 export default {
     setup() {
