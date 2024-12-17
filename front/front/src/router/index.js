@@ -47,6 +47,7 @@ export const router = createRouter({
     history: createWebHashHistory(),
     routes: routers
 })
+
 // 路由守卫
 /*
 router.beforeEach((to, from, next) => {
@@ -58,3 +59,4 @@ router.beforeEach((to, from, next) => {
         next(); // 继续导航
     }
 });*/
+
