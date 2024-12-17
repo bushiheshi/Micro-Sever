@@ -6,7 +6,11 @@ import store from '@/store/index.js'
 
 import managerHome from '../views/manager/managerHome.vue'
 import login from '../views/patient/login.vue'
+
+import patientHome from '../views/patient/Layout/patientHome.vue'
+
 import doctor from '../views/doctor/doctor.vue'
+
 
 const routers=[
     {
@@ -28,6 +32,16 @@ const routers=[
         }
     },
     {
+
+        path:"/patientHome",
+        name:"patientHome",
+        component: patientHome,
+        meta:{
+            title:"患者页面",
+            requiresAuth: true
+        }
+    },
+
         path:"/doctor",
         name:"doctor",
         component:doctor,
@@ -36,6 +50,7 @@ const routers=[
             requiresAuth: true // 表示该路由需要用户认证
         }
     }
+
 ]
 
 
