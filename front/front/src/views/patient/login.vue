@@ -374,7 +374,7 @@ export default {
         setTimeout(() => {
             localStorage.removeItem(mail);
             sendloading.value = false;
-        }, 1000*60*3); // 3分钟有效
+        }, 1000*60*10); // 10分钟有效
         };
 
         const VerifyCode = (formData) => {
