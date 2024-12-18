@@ -9,8 +9,12 @@ import login from '../views/patient/login.vue'
 
 import patientHome from '../views/patient/Layout/patientHome.vue'
 
+import PatientDetail from '@/views/manager/patientDetail.vue'
+
+
 import doctor from '../views/doctor/doctor.vue'
 import doctorLogin from '../views/doctor/doctorLogin.vue'
+
 
 const routers=[
     {
@@ -42,6 +46,16 @@ const routers=[
         }
     },
     {
+
+        path: '/manager/patient/:id',
+        name: 'PatientDetail',
+        component: PatientDetail,
+        meta: {
+            requiresAuth: true,
+            title: '患者详情'
+        }
+    },
+    {
         path:"/doctor",
         name:"doctor",
         component:doctor,
@@ -59,6 +73,7 @@ const routers=[
             requiresAuth: true // 表示该路由需要用户认证
         }
     }
+
 
 ]
 
