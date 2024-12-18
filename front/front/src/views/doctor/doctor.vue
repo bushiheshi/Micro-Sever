@@ -13,8 +13,8 @@
           default-active="/doctor"
         >
           <el-menu-item index="/doctor">我的日程</el-menu-item>
-          <el-menu-item index="/prescription">医生开方</el-menu-item>
-          <el-menu-item index="/consultation">在线咨询</el-menu-item>
+          <el-menu-item index="/doctor/timeTable">工作时间表</el-menu-item>
+          <el-menu-item index="/doctor/consultation">在线咨询</el-menu-item>
         </el-menu>
         <div class="user-info">
           <span class="username">医生名称(医生)</span>
@@ -57,7 +57,7 @@
 
           <!-- Appointments List -->
           <el-collapse v-if="appointments[selectedDateFormatted] && appointments[selectedDateFormatted].length > 0">
-            <el-collapse-item v-for="(appointment, index) in appointments[selectedDateFormatted]" :key="index" :title="`${appointment.name} - ${appointment.visitType}`">
+            <el-collapse-item v-for="(appointment, index) in appointments[selectedDateFormatted]" :key="index" :title="`${appointment.patientId} - ${appointment.appointmentDate}`">
               <div>
                 预约ID: {{ appointment.appointmentId }}<br/>
                 患者ID: {{ appointment.patientId }}<br/>
@@ -79,6 +79,17 @@
 import { ref, computed, onMounted } from 'vue';
 import { Plus, HomeFilled, Search, Delete } from '@element-plus/icons-vue';
 import { getUnFinishedByDoctor } from '@/api/doctorAPI.js';
+const doctorData = ref(null);
+
+// 使用 onMounted 钩子来加载本地存储的数据
+onMounted(() => {
+  const savedDoctorData = localStorage.getItem('doctorData');
+  if (savedDoctorData) {
+    doctorData.value = JSON.parse(savedDoctorData);
+    console.log("Loaded doctor data:", doctorData.value);
+    // 这里可以根据 doctorData 更新组件的状态或其他逻辑
+  }
+});
 
 const selectedDate = ref(new Date());
 

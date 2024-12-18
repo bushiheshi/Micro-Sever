@@ -10,7 +10,7 @@ import login from '../views/patient/login.vue'
 import patientHome from '../views/patient/Layout/patientHome.vue'
 
 import doctor from '../views/doctor/doctor.vue'
-
+import doctorLogin from '../views/doctor/doctorLogin.vue'
 
 const routers=[
     {
@@ -41,12 +41,21 @@ const routers=[
             requiresAuth: true
         }
     },
-
+    {
         path:"/doctor",
         name:"doctor",
         component:doctor,
         meta:{
             title: "医生页面", 
+            requiresAuth: true // 表示该路由需要用户认证
+        }
+    },
+    {
+        path:"/doctorLogin",
+        name:"doctorLogin",
+        component:doctorLogin,
+        meta:{
+            title: "医生登录页面", 
             requiresAuth: true // 表示该路由需要用户认证
         }
     }
