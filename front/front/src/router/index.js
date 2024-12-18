@@ -41,7 +41,7 @@ const routers=[
             requiresAuth: true
         }
     },
-
+    {
         path:"/doctor",
         name:"doctor",
         component:doctor,
