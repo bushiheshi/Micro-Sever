@@ -15,15 +15,15 @@ export const getAllTitles =async ()=>{
 }
 
 //获取所有部门
-export const getAllDepartments = async()=>{
-    try{
-        const response = await axios.get(`${BASE_URL}/doctor/getAllDepartments`);
-        return response.data;
-    }catch(error){
-        console.error('Failed to get all departments:',error);
-        throw error;
-    }
-}
+export const getAllDepartments = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/doctor/getAllDepartments`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to get all departments:', error);
+    throw error;
+  }
+};
 
 //获取单个职称
 export const getTitle = async(titleId)=>{
@@ -90,3 +90,14 @@ export const updateAttention = async(attentionId,updateDate)=>{
         throw error;
     }
 }
+
+//获取所有预约信息
+export const getAllAppointment = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/appointment/allAppointments`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to get all appointments:', error);
+    throw error;
+  }
+};

@@ -7,6 +7,8 @@ import store from '@/store/index.js'
 import managerHome from '../views/manager/managerHome.vue'
 import login from '../views/patient/login.vue'
 import patientHome from '../views/patient/Layout/patientHome.vue'
+import PatientDetail from '@/views/manager/patientDetail.vue'
+
 const routers=[
     {
         path:"/managerHome",
@@ -35,6 +37,15 @@ const routers=[
             requiresAuth: true
         }
     },
+    {
+        path: '/manager/patient/:id',
+        name: 'PatientDetail',
+        component: PatientDetail,
+        meta: {
+            requiresAuth: true,
+            title: '患者详情'
+        }
+    }
 ]
 
 

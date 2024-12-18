@@ -109,3 +109,24 @@ export const getPatientIDByDoctor=async(doctorId)=>{
         throw error;
     }
 }
+
+// 根据科室ID获取医生列表
+export const getDoctorsByDepartment = async (departmentId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/doctor/department/${departmentId}`);
+    // 如果需要，直接获取每个医生的详细信息
+    if (Array.isArray(response.data)) {
+      const doctorsWithDetails = await Promise.all(
+        response.data.map(async (doctorId) => {
+          const doctorInfo = await getDoctorInfo(doctorId);
+          return doctorInfo;
+        })
+      );
+      return { data: doctorsWithDetails };
+    }
+    return response;
+  } catch (error) {
+    console.error('Failed to get doctors by department:', error);
+    throw error;
+  }
+};
