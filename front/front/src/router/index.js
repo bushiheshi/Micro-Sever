@@ -6,8 +6,15 @@ import store from '@/store/index.js'
 
 import managerHome from '../views/manager/managerHome.vue'
 import login from '../views/patient/login.vue'
+
 import patientHome from '../views/patient/Layout/patientHome.vue'
+
 import PatientDetail from '@/views/manager/patientDetail.vue'
+=======
+
+import doctor from '../views/doctor/doctor.vue'
+
+
 
 const routers=[
     {
@@ -29,6 +36,7 @@ const routers=[
         }
     },
     {
+
         path:"/patientHome",
         name:"patientHome",
         component: patientHome,
@@ -38,6 +46,7 @@ const routers=[
         }
     },
     {
+
         path: '/manager/patient/:id',
         name: 'PatientDetail',
         component: PatientDetail,
@@ -46,6 +55,17 @@ const routers=[
             title: '患者详情'
         }
     }
+
+        path:"/doctor",
+        name:"doctor",
+        component:doctor,
+        meta:{
+            title: "医生页面", 
+            requiresAuth: true // 表示该路由需要用户认证
+        }
+    }
+
+
 ]
 
 
@@ -57,4 +77,16 @@ export const router = createRouter({
     history: createWebHashHistory(),
     routes: routers
 })
+
+// 路由守卫
+/*
+router.beforeEach((to, from, next) => {
+    const isAuthenticated = store.state.user || store.state.merchant ||store.state.rider;
+    const requiresAuth = to.meta.requiresAuth; // 确保获取到目标路由的 requiresAuth 属性
+    if (requiresAuth && !isAuthenticated) {
+        next({ path: '/login' }); // 重定向到登录
+    } else {
+        next(); // 继续导航
+    }
+});*/
 
