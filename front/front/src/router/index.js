@@ -4,57 +4,75 @@ import {
 } from 'vue-router'
 import store from '@/store/index.js'
 
-import managerHome from '../views/manager/managerHome.vue'
-import login from '../views/patient/login.vue'
-import patientHome from '../views/patient/Layout/patientHome.vue'
-import PatientDetail from '@/views/manager/patientDetail.vue'
+const AdminLayout = () => import('@/layouts/AdminLayout.vue')
+const managerHome = () => import('../views/manager/managerHome.vue')
+const login = () => import('../views/patient/login.vue')
+const patientHome = () => import('../views/patient/Layout/patientHome.vue')
+const PatientDetail = () => import('@/views/manager/patientDetail.vue')
+const DoctorManagement = () => import('@/views/manager/DoctorManagement.vue')
 
-const routers=[
+const routers = [
     {
-        path:"/managerHome",
-        name:"ManagerHome",
-        component:managerHome,
-        meta:{
-            title: "管理首页", // 用于设置页面标题或显示在面包屑导航中
-            requiresAuth: true // 表示该路由需要用户认证
-        }
+        path: '/',
+        redirect: '/managerHome'
     },
     {
-        path:"/login",
-        name:"login",
-        component:login,
-        meta:{
-            title: "登录页面", 
-            requiresAuth: false // 表示该路由需要用户认证
-        }
-    },
-    {
-        path:"/patientHome",
-        name:"patientHome",
-        component: patientHome,
-        meta:{
-            title:"患者页面",
-            requiresAuth: true
-        }
-    },
-    {
-        path: '/manager/patient/:id',
-        name: 'PatientDetail',
-        component: PatientDetail,
+        path: '/login',
+        name: 'login',
+        component: login,
         meta: {
-            requiresAuth: true,
-            title: '患者详情'
+            title: '登录页面',
+            requiresAuth: false
         }
+    },
+    {
+        path: '/',
+        component: AdminLayout,
+        children: [
+            {
+                path: 'managerHome',
+                name: 'ManagerHome',
+                component: managerHome,
+                meta: {
+                    title: '管理首页',
+                    requiresAuth: true
+                }
+            },
+            {
+                path: 'prescription',
+                name: 'DoctorManagement',
+                component: DoctorManagement,
+                meta: {
+                    requiresAuth: true,
+                    title: '医生管理'
+                }
+            },
+            {
+                path: 'manager/patient/:id',
+                name: 'PatientDetail',
+                component: PatientDetail,
+                meta: {
+                    requiresAuth: true,
+                    title: '患者详情'
+                }
+            }
+        ]
     }
-]
+];
 
-
-
-
-
-// 创建router 实例, 并暴露
-export const router = createRouter({
+const router = createRouter({
     history: createWebHashHistory(),
     routes: routers
-})
+});
+
+// 添加全局导航守卫
+router.beforeEach((to, from, next) => {
+    if (to.matched.length === 0) {
+        next('/managerHome'); // 如果没有匹配的路由，重定向到首页
+    } else {
+        next();
+    }
+});
+
+export { router };
 
