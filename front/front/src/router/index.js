@@ -4,22 +4,6 @@ import {
 } from 'vue-router'
 import store from '@/store/index.js'
 
-
-import managerHome from '../views/manager/managerHome.vue'
-import login from '../views/patient/login.vue'
-
-import patientHome from '../views/patient/Layout/patientHome.vue'
-
-import PatientDetail from '@/views/manager/patientDetail.vue'
-
-
-import doctor from '../views/doctor/doctor.vue'
-import doctorLogin from '../views/doctor/doctorLogin.vue'
-import WorkSchedule from '@/views/doctor/WorkSchedule.vue'
-
-
-const routers=[
-
 // 使用动态导入
 const AdminLayout = () => import('@/layouts/AdminLayout.vue')
 const managerHome = () => import('../views/manager/managerHome.vue')
@@ -28,8 +12,9 @@ const patientHome = () => import('../views/patient/Layout/patientHome.vue')
 const PatientDetail = () => import('@/views/manager/patientDetail.vue')
 const DoctorManagement = () => import('@/views/manager/DoctorManagement.vue')
 const doctor = () => import('../views/doctor/doctor.vue')
-import doctorLogin from '../views/doctor/doctorLogin.vue'
-import WorkSchedule from '@/views/doctor/WorkSchedule.vue'
+const doctorLogin = () => import('../views/doctor/doctorLogin.vue')
+const WorkSchedule = () => import('@/views/doctor/WorkSchedule.vue')
+
 const routers = [
     {
         path: '/',
@@ -57,19 +42,18 @@ const routers = [
         path: '/doctor',
         name: 'doctor',
         component: doctor,
-        
-        meta:{
+        meta: {
             title: "医生页面", 
-            requiresAuth: true // 表示该路由需要用户认证
+            requiresAuth: true
         }
     },
     {
-        path:"/doctorLogin",
-        name:"doctorLogin",
-        component:doctorLogin,
-        meta:{
+        path: '/doctorLogin',
+        name: 'doctorLogin',
+        component: doctorLogin,
+        meta: {
             title: "医生登录页面", 
-            requiresAuth: true // 表示该路由需要用户认证
+            requiresAuth: true
         }
     },
     {
@@ -78,10 +62,6 @@ const routers = [
         component: WorkSchedule,
         meta: {
             title: "医生工作时间", 
-            requiresAuth: true
-        }
-
-            title: '医生页面',
             requiresAuth: true
         }
     },
