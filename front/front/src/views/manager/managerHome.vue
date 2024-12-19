@@ -1,31 +1,5 @@
 <template>
-  <div class="clinic-system">
-  <el-container>
-    <el-header>
-      <el-header class="header">
-        <div class="logo">医生办公室预约系统管理员端</div>
-        <el-menu
-          mode="horizontal"
-          :router="true"
-          class="menu"
-          background-color="#2d2d2d"
-          text-color="#fff"
-          active-text-color="#fff"
-          default-active="/home"
-        >
-          <el-menu-item index="/home">预约信息</el-menu-item>
-          <el-menu-item index="/prescription">医生信息</el-menu-item>
-          <el-menu-item index="/billing">修改工作时间</el-menu-item>
-          <el-menu-item index="/pharmacy">通知管理</el-menu-item>
-          <el-menu-item index="/finance">公告管理</el-menu-item>
-
-        </el-menu>
-        <div class="user-info">
-          <span class="username">济医(超级管理员)</span>
-          <el-button type="danger" size="small">退出登录</el-button>
-        </div>
-      </el-header>
-    </el-header>
+  <div class="manager-home">
     <el-container>
       <el-aside width="200px">
         <el-menu
@@ -49,7 +23,7 @@
           <el-breadcrumb-item>{{ activeMenu === '1' ? '登记挂号' : '患者档案' }}</el-breadcrumb-item>
         </el-breadcrumb>
 
-        <!-- Search Form -->
+        <!-- 登记挂号内容 -->
         <div v-show="activeMenu === '1'">
           <el-form :inline="true" class="search-form">
             <el-form-item label="开始日">
@@ -94,7 +68,6 @@
             </el-form-item>
           </el-form>
 
-          <!-- Action Button -->
           <div class="action-bar">
             <el-button type="primary" @click="handleAdd">
               <el-icon><Plus /></el-icon> 添加挂号
@@ -102,7 +75,6 @@
             <span class="total">共有数据：{{ total }} 条</span>
           </div>
 
-          <!-- Data Table -->
           <el-table 
             :data="tableData" 
             border 
@@ -144,7 +116,6 @@
             </el-table-column>
           </el-table>
 
-          <!-- Pagination -->
           <div class="pagination">
             <el-pagination
               v-model:current-page="currentPage"
@@ -164,21 +135,18 @@
         </div>
       </el-main>
     </el-container>
-  </el-container>
-</div>
-  <!-- Header -->
-
-  <!-- Main Content -->
+  </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted, shallowRef } from "vue";
+import { ref, reactive, onMounted, shallowRef, computed } from "vue";
 import { Plus, HomeFilled, Search, Delete } from "@element-plus/icons-vue";
 import { getAllDoctorID, getDoctorInfo } from "@/api/doctorAPI";
 import { getAllAppointment } from "@/api/managerAPI";
 import { getPatientInfo } from "@/api/patientAPI";
 import { ElMessage } from 'element-plus';
 import PatientRecords from './patientRecords.vue';
+import { useRouter, useRoute } from 'vue-router';
 
 const doctorID = ref([]);
 
@@ -420,10 +388,21 @@ const handleMenuSelect = (index: string) => {
     fetchAppointments();
   }
 };
+
+// 获取当前路由
+const route = useRoute();
+const activeRoute = computed(() => route.path);
+
+const router = useRouter();
+
+// 添加路由导航守卫
+const handleMenuClick = (path: string) => {
+  router.push(path);
+};
 </script>
 
 <style scoped>
-.clinic-system {
+.manager-home {
   height: 100vh;
   display: flex;
 }

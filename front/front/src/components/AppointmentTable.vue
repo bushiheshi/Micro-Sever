@@ -64,7 +64,14 @@
             {{ translateStatus(currentAppointment.status) }}
           </el-tag>
         </el-descriptions-item>
-        <el-descriptions-item label="医生姓名">{{ currentAppointment.doctorName }}</el-descriptions-item>
+        <el-descriptions-item label="医生姓名">
+          <el-button 
+            type="text" 
+            @click="showDoctorInfo(currentAppointment.doctorId)"
+          >
+            {{ currentAppointment.doctorName }}
+          </el-button>
+        </el-descriptions-item>
         <el-descriptions-item label="科室">{{ currentAppointment.departmentName }}</el-descriptions-item>
         <el-descriptions-item label="预约日期">{{ currentAppointment.appointmentDate }}</el-descriptions-item>
         <el-descriptions-item label="预约时间">{{ currentAppointment.appointmentTime }}</el-descriptions-item>
@@ -75,11 +82,29 @@
         </el-descriptions-item>
       </el-descriptions>
     </el-dialog>
+
+    <el-dialog
+      v-model="doctorDialogVisible"
+      title="医生信息"
+      width="50%"
+      destroy-on-close
+    >
+      <el-descriptions :column="2" border>
+        <el-descriptions-item label="姓名">{{ currentDoctor.name }}</el-descriptions-item>
+        <el-descriptions-item label="性别">{{ currentDoctor.gender }}</el-descriptions-item>
+        <el-descriptions-item label="科室">{{ currentDoctor.departmentName }}</el-descriptions-item>
+        <el-descriptions-item label="职称">{{ currentDoctor.title }}</el-descriptions-item>
+        <el-descriptions-item label="专长" :span="2">{{ currentDoctor.specialty || '暂无' }}</el-descriptions-item>
+        <el-descriptions-item label="简介" :span="2">{{ currentDoctor.introduction || '暂无' }}</el-descriptions-item>
+      </el-descriptions>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { defineProps, computed, ref, watchEffect } from 'vue';
+import { getDoctorInfo } from '@/api/doctorAPI';
+import { ElMessage } from 'element-plus';
 
 const props = defineProps({
   appointments: {
@@ -95,6 +120,8 @@ const props = defineProps({
 
 const dialogVisible = ref(false);
 const currentAppointment = ref({});
+const doctorDialogVisible = ref(false);
+const currentDoctor = ref({});
 
 watchEffect(() => {
   console.log(`${props.type} appointments changed:`, props.appointments);
@@ -150,6 +177,21 @@ const showDetails = (appointment: any) => {
   currentAppointment.value = appointment;
   dialogVisible.value = true;
 };
+
+const showDoctorInfo = async (doctorId: string) => {
+  try {
+    const doctorInfo = await getDoctorInfo(doctorId);
+    currentDoctor.value = doctorInfo;
+    doctorDialogVisible.value = true;
+  } catch (error) {
+    console.error('Error fetching doctor info:', error);
+    ElMessage.error('获取医生信息失败');
+  }
+};
+
+const handleDoctorClick = async (doctorId: string) => {
+  await showDoctorInfo(doctorId);
+};
 </script>
 
 <style scoped>
@@ -167,5 +209,15 @@ const showDetails = (appointment: any) => {
 
 :deep(.el-table) {
   margin-top: 10px;
+}
+
+:deep(.el-button--text) {
+  padding: 0;
+  color: var(--el-color-primary);
+  font-weight: normal;
+}
+
+:deep(.el-button--text:hover) {
+  text-decoration: underline;
 }
 </style> 
