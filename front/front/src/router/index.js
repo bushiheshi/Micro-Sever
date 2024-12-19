@@ -14,6 +14,7 @@ import PatientDetail from '@/views/manager/patientDetail.vue'
 
 import doctor from '../views/doctor/doctor.vue'
 import doctorLogin from '../views/doctor/doctorLogin.vue'
+import WorkSchedule from '@/views/doctor/WorkSchedule.vue'
 
 
 const routers=[
@@ -71,6 +72,15 @@ const routers=[
         meta:{
             title: "医生登录页面", 
             requiresAuth: true // 表示该路由需要用户认证
+        }
+    },
+    {
+        path: '/doctor/timeTable',
+        name: 'DoctorWorkSchedule',
+        component: WorkSchedule,
+        meta: {
+            title: "医生工作时间", 
+            requiresAuth: true
         }
     }
 

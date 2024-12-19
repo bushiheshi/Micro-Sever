@@ -65,13 +65,19 @@ export const updateDoctorInfo=async(doctorId,updateData)=>{
 }
 
 //获取医生未完成预约
-export const getUnFinishedByDoctor = async(doctorId)=>{
-    try{
+export const getUnFinishedByDoctor = async(doctorId) => {
+    try {
         const response = await axios.get(`${BASE_URL}/appointment/unFinishedByDoctor/${doctorId}`);
-        return response.data;
-    }catch (error){
-        console.error('Failed to get unfinished appointment:',error);
-        throw error;
+        if (response.status === 200) {
+            return response.data;
+        }
+        throw new Error('获取未完成预约失败');
+    } catch (error) {
+        console.error('Failed to get unfinished appointment:', error);
+        if (error.response?.status === 400) {
+            console.log('服务器返回的错误信息:', error.response.data);
+        }
+        return []; // 返回空数组而不是抛出错误
     }
 }
 
@@ -109,24 +115,92 @@ export const getPatientIDByDoctor=async(doctorId)=>{
         throw error;
     }
 }
-
 // 根据科室ID获取医生列表
 export const getDoctorsByDepartment = async (departmentId) => {
-  try {
-    const response = await axios.get(`${BASE_URL}/doctor/department/${departmentId}`);
-    // 如果需要，直接获取每个医生的详细信息
-    if (Array.isArray(response.data)) {
-      const doctorsWithDetails = await Promise.all(
-        response.data.map(async (doctorId) => {
-          const doctorInfo = await getDoctorInfo(doctorId);
-          return doctorInfo;
-        })
-      );
-      return { data: doctorsWithDetails };
+    try {
+      const response = await axios.get(`${BASE_URL}/doctor/department/${departmentId}`);
+      // 如果需要，直接获取每个医生的详细信息
+      if (Array.isArray(response.data)) {
+        const doctorsWithDetails = await Promise.all(
+          response.data.map(async (doctorId) => {
+            const doctorInfo = await getDoctorInfo(doctorId);
+            return doctorInfo;
+          })
+        );
+        return { data: doctorsWithDetails };
+      }
+      return response;
+    } catch (error) {
+      console.error('Failed to get doctors by department:', error);
+      throw error;
     }
-    return response;
-  } catch (error) {
-    console.error('Failed to get doctors by department:', error);
-    throw error;
-  }
+  };
+//标记为预约完成
+export const markAsFinished = async(appointmentId)=>{
+    try{
+        await axios.get(`${BASE_URL}/appointment/markAsFinished/${appointmentId}`);
+
+    }catch (error){
+        console.error('Failed to mark this appointment as finished:',error);
+        throw error;
+    }
+}
+
+//提醒预约
+
+export const remindAppointment = async()=>{
+    try{
+        await axios.get(`${BASE_URL}/appointment/remindAppointment/${doctorId}`);
+    }catch (error){
+        console.error('Failed to get unfinished appointment:',error);
+        throw error;
+    }
+}
+
+export const updateWorkingHour = async (doctorId, workingHourData) => {
+    try {
+        const response = await axios.post(`${BASE_URL}/administrator/updateWorkingHour/${doctorId}`, {
+            dayOfWeek: workingHourData.dayOfWeek,
+            startTimeMorning: workingHourData.startTimeMorning,
+            endTimeMorning: workingHourData.endTimeMorning,
+            startTimeAfternoon: workingHourData.startTimeAfternoon,
+            endTimeAfternoon: workingHourData.endTimeAfternoon
+        });
+        
+        if (response.status === 200) {
+            return {
+                success: true,
+                message: '工作时间更新成功',
+                data: response.data
+            };
+        } else {
+            throw new Error('更新工作时间失败');
+        }
+    } catch (error) {
+        console.error('更新工作时间失败:', error);
+        return {
+            success: false,
+            message: error.response?.data?.message || '更新工作时间失败，请稍后重试',
+            error: error
+        };
+    }
+};
+
+// 获取医生工作时间的函数
+export const getDoctorWorkingHours = async (doctorId) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/administrator/getWorkingHoursByDoctor/${doctorId}`);
+        console.log("done3");
+        return {
+            data: response.data
+        };
+    } catch (error) {
+        console.error('获取工作时间失败:', error);
+        if (error.response?.status === 404) {
+            console.log('找不到工作时间数据');
+        }
+        return {
+            data: [] // 错误时返回空数组
+        };
+    }
 };
