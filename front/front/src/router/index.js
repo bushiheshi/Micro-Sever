@@ -4,6 +4,7 @@ import {
 } from 'vue-router'
 import store from '@/store/index.js'
 
+
 const AdminLayout = () => import('@/layouts/AdminLayout.vue')
 const managerHome = () => import('../views/manager/managerHome.vue')
 const login = () => import('../views/patient/login.vue')
@@ -11,12 +12,25 @@ const patientHome = () => import('../views/patient/Layout/patientHome.vue')
 const PatientDetail = () => import('@/views/manager/patientDetail.vue')
 const DoctorManagement = () => import('@/views/manager/DoctorManagement.vue')
 
+import managerHome from '../views/manager/managerHome.vue'
+import login from '../views/patient/login.vue'
+
+import patientHome from '../views/patient/Layout/patientHome.vue'
+
+import PatientDetail from '@/views/manager/patientDetail.vue'
+
+
+import doctor from '../views/doctor/doctor.vue'
+
+
+
 const routers = [
     {
         path: '/',
         redirect: '/managerHome'
     },
     {
+
         path: '/login',
         name: 'login',
         component: login,
@@ -60,6 +74,39 @@ const routers = [
     }
 ];
 
+
+        path:"/patientHome",
+        name:"patientHome",
+        component: patientHome,
+        meta:{
+            title:"患者页面",
+            requiresAuth: true
+        }
+    },
+    {
+
+        path: '/manager/patient/:id',
+        name: 'PatientDetail',
+        component: PatientDetail,
+        meta: {
+            requiresAuth: true,
+            title: '患者详情'
+        }
+    }
+
+        path:"/doctor",
+        name:"doctor",
+        component:doctor,
+        meta:{
+            title: "医生页面", 
+            requiresAuth: true // 表示该路由需要用户认证
+        }
+    }
+
+
+]
+
+
 const router = createRouter({
     history: createWebHashHistory(),
     routes: routers
@@ -75,4 +122,16 @@ router.beforeEach((to, from, next) => {
 });
 
 export { router };
+
+// 路由守卫
+/*
+router.beforeEach((to, from, next) => {
+    const isAuthenticated = store.state.user || store.state.merchant ||store.state.rider;
+    const requiresAuth = to.meta.requiresAuth; // 确保获取到目标路由的 requiresAuth 属性
+    if (requiresAuth && !isAuthenticated) {
+        next({ path: '/login' }); // 重定向到登录
+    } else {
+        next(); // 继续导航
+    }
+});*/
 
