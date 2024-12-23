@@ -41,6 +41,16 @@
         >
             {{loginLoading ? '登 录 中' : '登 录'}}
         </el-button>
+        
+        <el-button
+            link
+            type="info"
+            class="back-button"
+            @click="backToRoleSelect"
+        >
+            <el-icon><ArrowLeft /></el-icon>
+            返回身份选择
+        </el-button>
         </el-form>
         <el-form
         ref="signUpRef"
@@ -168,6 +178,23 @@
       .el-input .el-input__icon {
         font-size: 1.4em;
       }
+
+      .back-button {
+        margin-top: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        width: 100%;
+        font-size: 14px;
+        color: #909399;
+        transition: all 0.3s;
+      }
+
+      .back-button:hover {
+        color: #409EFF;
+        transform: translateX(-4px);
+      }
 </style>
 <style src='../../../static/css/fontawesome-all.min.css' scoped></style>
 <style src='../../../static/css/style.css' scoped></style>
@@ -176,10 +203,13 @@
 import {ref,onBeforeMount,onMounted} from 'vue';
 import axios  from 'axios';
 import {ElMessage} from 'element-plus';
-import {router} from '../../router';
+import BackToRole from '@/components/BackToRole.vue';
+import { useRouter } from 'vue-router';
+import { ArrowLeft } from '@element-plus/icons-vue';
 
 export default {
     setup() {
+        const router = useRouter();
         const loginLoading = ref(false);
         const signUploading = ref(false);
         const sendloading = ref(false);
@@ -303,44 +333,27 @@ export default {
         });
         });
 
-        const Login = (formData) => {
-        const loginApi = "http://121.40.197.3:10010/patient/login"
-        loginRef.value.validate((valid) => {
-            if (valid) {
-            loginLoading.value = true;
-            // TODO: axios 登录请求
-            const params = {
-                "email":loginForm.value.mail,
-                "password":loginForm.value.password
-            };
-            axios.post(loginApi,params)
-                .then(response => {
-                // TODO：成功登录
-                if(response.status == 200){
-                    console.log("成功登录");
-                    // 保存已登录信息
-                    localStorage.setItem('microData',response.data);
-                    setTimeout(() => {
-                        ElMessage.success("成功登录");
-                        loginLoading.value = false;
-                    }, 500);
-                    // 跳转主页
-                    router.push('/login');
-                    location.reload();
+        const Login = async (formData) => {
+            try {
+                const response = await axios.post('http://121.40.197.3:10010/patient/login', {
+                    email: loginForm.value.mail,
+                    password: loginForm.value.password
+                });
+
+                if (response.status === 200 && response.data) {
+                    // 存储用户信息和token
+                    localStorage.setItem('userToken', 'patient-token');
+                    localStorage.setItem('patientInfo', JSON.stringify(response.data));
+                    
+                    ElMessage.success('登录成功');
+                    router.push('/patientHome');
+                } else {
+                    ElMessage.error('登录失败，请检查账号密码');
                 }
-                })
-                .catch(
-                    error => {
-                        console.log("登录失败");
-                        alert("邮箱或密码错误，请重试");
-                        loginForm.value.mail = "";
-                        loginForm.value.password = "";
-                        loginLoading.value = false;
-                    }
-                );
-                
+            } catch (error) {
+                console.error('登录失败:', error);
+                ElMessage.error('登录失败，请稍后重试');
             }
-        });
         };
 
         
@@ -446,22 +459,28 @@ export default {
         });
         signUploading.value = false;
         };
+
+        const backToRoleSelect = () => {
+            router.push('/role-select');
+        };
+
         return {
-        loginLoading,
-        signUploading,
-        sendloading,
-        loginRef,
-        signUpRef,
-        loginForm,
-        signUpForm,
-        loginRules,
-        signUpRules,
-        onMounted,
-        isPopupVisible,
-        Login,
-        SignUp,
-        SendMail,
-        VerifyCode
+            loginLoading,
+            signUploading,
+            sendloading,
+            loginRef,
+            signUpRef,
+            loginForm,
+            signUpForm,
+            loginRules,
+            signUpRules,
+            onMounted,
+            isPopupVisible,
+            Login,
+            SignUp,
+            SendMail,
+            VerifyCode,
+            backToRoleSelect
         };
     }
 }

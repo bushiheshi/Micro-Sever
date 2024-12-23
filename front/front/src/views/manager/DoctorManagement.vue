@@ -117,30 +117,37 @@
       width="50%"
     >
       <el-form :model="editForm" label-width="100px">
-        <el-form-item label="姓名">
+        <el-form-item label="姓名" required>
           <el-input v-model="editForm.name" />
         </el-form-item>
-        <el-form-item label="性别">
-          <el-select v-model="editForm.gender">
-            <el-option label="男" value="男" />
-            <el-option label="女" value="女" />
-          </el-select>
+        <el-form-item label="性别" required>
+          <el-radio-group v-model="editForm.gender">
+            <el-radio label="男">男</el-radio>
+            <el-radio label="女">女</el-radio>
+          </el-radio-group>
         </el-form-item>
-        <el-form-item label="科室">
+        <el-form-item label="邮箱">
+          <el-input v-model="editForm.email" type="email" />
+        </el-form-item>
+        <el-form-item label="科室" required>
           <el-select v-model="editForm.departmentId">
             <el-option
               v-for="dept in departments"
               :key="dept.departmentId"
-              :label="dept.departmentName"
+              :label="dept.departmentName1"
               :value="dept.departmentId"
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="职称">
-          <el-input v-model="editForm.title" />
-        </el-form-item>
-        <el-form-item label="专长">
-          <el-input v-model="editForm.specialty" type="textarea" />
+        <el-form-item label="职称" required>
+          <el-select v-model="editForm.titleId">
+            <el-option
+              v-for="title in titles"
+              :key="title.titleId"
+              :label="title.titleName"
+              :value="title.titleId"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="简介">
           <el-input v-model="editForm.introduction" type="textarea" :rows="4" />
@@ -272,20 +279,39 @@ const showDoctorDetails = (doctor) => {
 
 // 编辑医生信息
 const editDoctor = (doctor) => {
-  editForm.value = { ...doctor };
+  editForm.value = {
+    ...doctor,
+    email: doctor.email || '',
+    password: doctor.password || '',
+    IDCardWord: doctor.IDCardWord || 18
+  };
   editVisible.value = true;
 };
 
 // 保存编辑
 const handleSave = async () => {
   try {
-    await updateDoctorInfo(editForm.value.doctorId, editForm.value);
-    ElMessage.success('保存成功');
-    editVisible.value = false;
-    await fetchDoctors(); // 刷新列表
+    // 验证必填字段
+    if (!editForm.value.name?.trim() || 
+        !editForm.value.gender || 
+        !editForm.value.departmentId || 
+        !editForm.value.titleId) {
+      ElMessage.warning('请填写所有必要信息');
+      return;
+    }
+
+    const result = await updateDoctorInfo(editForm.value.doctorId, editForm.value);
+    
+    if (result.success) {
+      ElMessage.success('保存成功');
+      editVisible.value = false;
+      await fetchDoctors(); // 刷新列表
+    } else {
+      ElMessage.error(result.message || '保存失败');
+    }
   } catch (error) {
     console.error('Error saving doctor info:', error);
-    ElMessage.error('保存失败');
+    ElMessage.error(error.message || '保存失败，请稍后重试');
   }
 };
 

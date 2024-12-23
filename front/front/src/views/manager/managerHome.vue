@@ -139,7 +139,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted, shallowRef, computed } from "vue";
+import { ref, reactive, onMounted, shallowRef, computed, onBeforeMount, watch } from "vue";
 import { Plus, HomeFilled, Search, Delete } from "@element-plus/icons-vue";
 import { getAllDoctorID, getDoctorInfo } from "@/api/doctorAPI";
 import { getAllAppointment } from "@/api/managerAPI";
@@ -197,52 +197,97 @@ const searchForm = reactive<SearchForm>({
 const tableData = ref<any[]>([]);
 const loading = ref(false);
 
-// 获取所有预约信息
-const fetchAppointments = async () => {
-  loading.value = true;
-  try {
-    const appointments = await getAllAppointment();
-    console.log('Raw appointments:', appointments); // 添加日志查看原始数据
-    
-    // 处理每个预约记录
-    const processedAppointments = await Promise.all(
-      appointments.map(async (appointment: Appointment) => {
-        try {
-          // 获取患者信息
-          const patientInfo = await getPatientInfo(appointment.patientId);
-          // 获取医生信息
-          const doctorInfo = await getDoctorInfo(appointment.doctorId);
-          
-          // 合并信息
-          return {
-            registrationNo: appointment.appointmentId,
-            diagnosisNo: appointment.patientId,
-            name: patientInfo.name,
-            gender: patientInfo.gender,
-            age: calculateAge(patientInfo.birthDate),
-            phone: patientInfo.phone,
-            doctor: doctorInfo.name,
-            registrationTime: `${appointment.appointmentDate} ${appointment.appointmentTime}`,
-            visitType: '普通门诊',
-            status: translateStatus(appointment.status),
-          };
-        } catch (error) {
-          console.error('Error processing appointment:', appointment, error);
-          return null;
-        }
-      })
-    );
+// 初始化 router
+const router = useRouter();
 
-    // 过滤掉处理失败的预约
-    tableData.value = processedAppointments.filter(item => item !== null);
-    total.value = tableData.value.length;
+// 组件状态
+const appointments = ref([]);
+const total = ref(0);
+const currentPage = ref(1);
+const pageSize = ref(10);
+
+// 获取预约数据
+const fetchAppointments = async () => {
+  try {
+    loading.value = true;
+    console.log('开始获取预约数据');
+
+    // 确保有token
+    const token = localStorage.getItem('adminToken');
+    if (!token) {
+      ElMessage.error('登录已过期，请重新登录');
+      router.push('/admin/login');
+      return;
+    }
+
+    const response = await getAllAppointment();
+    console.log('获取到的预约数据:', response);
+    
+    if (response) {
+      appointments.value = Array.isArray(response) ? response : [];
+      total.value = appointments.value.length;
+      
+      // 处理分页
+      handleCurrentChange(1);
+    }
   } catch (error) {
     console.error('Error fetching appointments:', error);
-    ElMessage.error('获取预约信息失败');
+    if (error.response?.status === 401) {
+      ElMessage.error('登录已过期，请重新登录');
+      router.push('/admin/login');
+    } else {
+      ElMessage.error(error.message || '获取预约信息失败');
+    }
   } finally {
     loading.value = false;
   }
 };
+
+// 在组件挂载时获取数据
+onMounted(async () => {
+  try {
+    // 等待一下，确保从登录页面跳转后token已经完全保存
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    const token = localStorage.getItem('adminToken');
+    if (!token) {
+      ElMessage.error('请先登录');
+      router.push('/admin/login');
+      return;
+    }
+
+    console.log('加载预约管理页面');
+    await fetchAppointments();
+    console.log('当前预约列表:', appointments.value);
+  } catch (error) {
+    console.error('初始化失败:', error);
+    ElMessage.error('初始化失败，请刷新页面重试');
+  }
+});
+
+// 添加路由守卫
+const checkAuth = async () => {
+  const token = localStorage.getItem('adminToken');
+  if (!token) {
+    ElMessage.error('请先登录');
+    router.push('/admin/login');
+    return false;
+  }
+  return true;
+};
+
+// 在进入页面前检查权限
+onBeforeMount(async () => {
+  await checkAuth();
+});
+
+// 在路由变化时检查权限
+watch(
+  () => router.currentRoute.value,
+  async () => {
+    await checkAuth();
+  }
+);
 
 // 计算年龄的函数
 const calculateAge = (birthDate: string) => {
@@ -269,11 +314,6 @@ const translateStatus = (status: string) => {
   };
   return statusMap[status] || status;
 };
-
-// Pagination
-const currentPage = ref<number>(1);
-const pageSize = ref<number>(10);
-const total = ref<number>(5);
 
 // Methods
 const handleSearch = async () => {
@@ -392,8 +432,6 @@ const handleMenuSelect = (index: string) => {
 // 获取当前路由
 const route = useRoute();
 const activeRoute = computed(() => route.path);
-
-const router = useRouter();
 
 // 添加路由导航守卫
 const handleMenuClick = (path: string) => {

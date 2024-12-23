@@ -1,60 +1,94 @@
 <script setup lang="ts">
-defineOptions({
-  name: 'MyHeader'
-})
-import Img from '@/assets/logo.png'
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const props = defineProps({
+  patientInfo: {
+    type: Object,
+    required: true
+  }
+});
+
+const router = useRouter();
+
+const handleLogout = () => {
+  localStorage.removeItem('userToken');
+  localStorage.removeItem('patientInfo');
+  router.push('/role-select');
+};
 </script>
 
 <template>
-<div class="container">
- <div class="imgContainer">
-   <img :src="Img" alt="logo">
- </div>
- <div class="headerRight">
-   <ul>
-     <li>公众版|</li>
-     <li>English|</li>
-     <li>German|</li>
-     <li>员工/学生版</li>
-     <li><input type="text" placeholder="搜索"></li>
-   </ul>
- </div>
-</div>
+  <div class="header">
+    <div class="logo-section">
+      <img src="@/assets/logo.png" alt="Logo" class="logo" />
+      <h1>医生办公室预约系统</h1>
+    </div>
 
+    <div class="user-section" v-if="patientInfo">
+      <el-dropdown>
+        <span class="user-info">
+          <el-avatar :size="32" icon="UserFilled" />
+          <span class="username">{{ patientInfo.name }}</span>
+        </span>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item>个人信息</el-dropdown-item>
+            <el-dropdown-item>我的预约</el-dropdown-item>
+            <el-dropdown-item divided @click="handleLogout">退出登录</el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+    </div>
+  </div>
 </template>
 
 <style scoped>
-.container {
-  padding:20px 75px;
-  display: flex; /* 启用 Flexbox 布局，子元素水平排列 */
-  align-items: flex-end; /* 垂直居中对齐 */
-  justify-content: space-between; /* 左右两部分分散排列，尽量拉开 */
-}
-
-.imgContainer {
-  flex-shrink: 0; /* 防止图片被压缩 */
-}
-
-.headerRight ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.header {
+  padding: 0 20px;
+  height: 60px;
   display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.headerRight li {
-  margin-right: 10px;
-  font-size: 18px;
-  input{
-    width:30%;
-    padding: 8px 15px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 50px;
-    outline: none;
-    background-color: #f9f9f9;
-    transition: all 0.3s ease;
-  }
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
+.logo {
+  height: 40px;
+}
+
+h1 {
+  font-size: 20px;
+  color: #303133;
+  margin: 0;
+}
+
+.user-section {
+  display: flex;
+  align-items: center;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.user-info:hover {
+  background-color: #f5f7fa;
+}
+
+.username {
+  font-size: 14px;
+  color: #606266;
+}
 </style>

@@ -1,70 +1,81 @@
 <template>
-  <div class="container" id="app">
-    <div class="forms-container">
-      <div class="signin-signup">
-        <!-- 左侧装饰图案 -->
-        <div class="decoration-left">
-          <img 
-            src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-system-icons/assets/Doctor/SVG/ic_fluent_doctor_24_regular.svg" 
-            alt="医生插图" 
-            class="doctor-image" 
-          />
-        </div>
-
-        <!-- 登录表单部分 -->
-        <el-form
-          ref="loginRef"
-          :model="loginForm"
-          :rules="loginRules"
-          class="sign-in-form"
-        >
-          <div class="form-header">
-            <h2 class="title">医生工作站</h2>
-            <p class="subtitle">欢迎回来，请登录您的账号</p>
+  <div class="login-container">
+    <div class="container" id="app">
+      <div class="forms-container">
+        <div class="signin-signup">
+          <!-- 左侧装饰图案 -->
+          <div class="decoration-left">
+            <img 
+              src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-system-icons/assets/Doctor/SVG/ic_fluent_doctor_24_regular.svg" 
+              alt="医生插图" 
+              class="doctor-image" 
+            />
           </div>
 
-          <div class="input-field">
-            <i class="fa-solid fa-envelope"></i>
-            <el-form-item prop="email">
-              <el-input
-                v-model="loginForm.email"
-                placeholder="请输入邮箱"
-                @keyup.enter="Login(loginForm)"
-              />
-            </el-form-item>
-          </div>
-
-          <div class="input-field">
-            <i class="fa-solid fa-lock"></i>
-            <el-form-item prop="password">
-              <el-input
-                v-model="loginForm.password"
-                type="password"
-                placeholder="请输入密码"
-                autocomplete="off"
-                show-password
-                @keyup.enter="Login(loginForm)"
-              />
-            </el-form-item>
-          </div>
-
-          <div class="form-footer">
-            <el-button
-              type="primary"
-              :loading="loginLoading"
-              @click="Login(loginForm)"
-              class="btn-login"
-              round
-            >
-              {{ loginLoading ? '登录中...' : '登 录' }}
-            </el-button>
-            <div class="help-links">
-              <a href="#" class="forgot-password">忘记密码？</a>
-              <span class="divider">|</span>
-              <a href="#" class="contact-admin">联系管理员</a>
+          <!-- 登录表单部分 -->
+          <el-form
+            ref="loginRef"
+            :model="loginForm"
+            :rules="loginRules"
+            class="sign-in-form"
+          >
+            <div class="form-header">
+              <h2 class="title">医生工作站</h2>
+              <p class="subtitle">欢迎回来，请登录您的账号</p>
             </div>
-          </div>
-        </el-form>
+
+            <div class="input-field">
+              <i class="fa-solid fa-envelope"></i>
+              <el-form-item prop="email">
+                <el-input
+                  v-model="loginForm.email"
+                  placeholder="请输入邮箱"
+                  @keyup.enter="Login(loginForm)"
+                />
+              </el-form-item>
+            </div>
+
+            <div class="input-field">
+              <i class="fa-solid fa-lock"></i>
+              <el-form-item prop="password">
+                <el-input
+                  v-model="loginForm.password"
+                  type="password"
+                  placeholder="请输入密码"
+                  autocomplete="off"
+                  show-password
+                  @keyup.enter="Login(loginForm)"
+                />
+              </el-form-item>
+            </div>
+
+            <div class="form-footer">
+              <el-button
+                type="primary"
+                :loading="loginLoading"
+                @click="Login(loginForm)"
+                class="btn-login"
+                round
+              >
+                {{ loginLoading ? '登录中...' : '登 录' }}
+              </el-button>
+              <el-button
+                link
+                type="info"
+                class="back-button"
+                @click="backToRoleSelect"
+              >
+                <el-icon><ArrowLeft /></el-icon>
+                返回身份选择
+              </el-button>
+              <div class="help-links">
+                <a href="#" class="forgot-password">忘记密码？</a>
+                <span class="divider">|</span>
+                <a href="#" class="contact-admin">联系管理员</a>
+              </div>
+            </div>
+          </el-form>
+        </div>
       </div>
     </div>
   </div>
@@ -75,6 +86,8 @@ import { ref, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router'; 
 import axios from 'axios';
+import BackToRole from '@/components/BackToRole.vue';
+import { ArrowLeft } from '@element-plus/icons-vue';
 // 表单引用
 const loginRef = ref(null);
 
@@ -127,6 +140,10 @@ const Login = async (formData) => {
       }
     }
   });
+};
+
+const backToRoleSelect = () => {
+  router.push('/role-select');
 };
 </script>
 
@@ -253,6 +270,22 @@ const Login = async (formData) => {
 
 .divider {
   color: #ddd;
+}
+
+.back-button {
+  width: 100%;
+  margin: 12px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: #909399;
+}
+
+.back-button:hover {
+  color: #409EFF;
+  transform: translateX(-4px);
+  transition: transform 0.2s;
 }
 
 @media (max-width: 768px) {
