@@ -1,5 +1,7 @@
 import request from '@/utils/request.js'
 
+const BASE_URL = 'http://121.40.197.3:10010';
+
 //获取所有患者ID
 export const getAllPatientID = async()=>{
     try{
@@ -32,27 +34,7 @@ export const updatePatientInfo = async(patientId,updateData)=>{
     }
 }
 
-//获取患者接受的消息
-export const getPatientMessage = async(patientId)=>{
-    try{
-        const response = await request.get(`/notification/readByPatient/${patientId}`);
-        return response;
-    }catch(error){
-        console.error('Failed to get patient message:',error);
-        throw error;
-    }
-}
 
-//获取患者发送的消息
-export const getPatientSendMessage = async(patientId)=>{
-    try{
-        const response = await request.get(`/notification/sentByPatient/${patientId}`);
-        return response;
-    }catch(error){
-        console.error('Failed to get patient send message:',error);
-        throw error;
-    }
-}
 
 //获取患者未完成预约
 export const getUnFinishedByPatient = async(patientId)=>{
@@ -108,3 +90,37 @@ export const createAppointment = async(appointmentData)=>{
         throw error;
     }
 }
+
+//创建消息
+export const createNotification = async(notificationData)=>{
+    try{
+        const response = await request.post(`${BASE_URL}/notification/createNotification`,notificationData);
+        return response;
+    }catch(error){
+        console.error('Failed to create notification:',error);
+        throw error;
+    }
+}
+
+//获取患者接收的消息
+export const getPatientReceivedMessage = async(patientId)=>{
+    try{
+        const response = await request.get(`/notification/readByPatient/${patientId}`);
+        return response;
+    }catch(error){
+        console.error('Failed to get patient received message:',error);
+        throw error;
+    }
+}   
+
+//获取患者发送的消息
+export const getPatientSendMessage = async(patientId)=>{
+    try{
+        const response = await request.get(`/notification/sentByPatient/${patientId}`);
+        return response;
+    }catch(error){
+        console.error('Failed to get patient send message:',error);
+        throw error;
+    }
+}
+
