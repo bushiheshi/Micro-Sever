@@ -150,7 +150,7 @@ export const getDoctorsByDepartment = async (departmentId) => {
 //标记为预约完成
 export const markAsFinished = async(appointmentId)=>{
     try{
-        await request.get(`${BASE_URL}/appointment/markAsFinished/${appointmentId}`);
+        await request.put(`${BASE_URL}/appointment/markAsFinished/${appointmentId}`);
 
     }catch (error){
         console.error('Failed to mark this appointment as finished:',error);

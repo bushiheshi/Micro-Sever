@@ -60,7 +60,7 @@
               <div class="date-content" :class="{ 'has-appointments': appointments[formatDate(data.day)] }">
                 {{ formatDate(data.day) }}
                 <span v-if="appointments[formatDate(data.day)]" class="badge">
-                  {{ appointments[formatDate(data.day)].length }}
+                  {{ getUnFinishedNum(appointments[formatDate(data.day)]) }}
                 </span>
               </div>
             </template>
@@ -90,6 +90,16 @@
                     {{ getStatusText(appointment.status) }}
                   </el-tag>
                 </p>
+                <el-button 
+                  type="success" 
+                  size="small" 
+                  @click="clickFinished(appointment)"
+                  :disabled="appointment.status !== 0" 
+                  v-if="appointment.status === 0"
+                  style="text-align: center;"
+                >
+                  标记为完成
+                </el-button>
               </div>
             </el-collapse-item>
           </el-collapse>
@@ -119,7 +129,7 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted } from 'vue';
 import { Plus, HomeFilled, Search, Delete } from '@element-plus/icons-vue';
-import { getUnFinishedByDoctor, getDoctorWorkingHours } from '@/api/doctorAPI.js';
+import { getUnFinishedByDoctor,getFinishedByDoctor, getDoctorWorkingHours,markAsFinished } from '@/api/doctorAPI.js';
 import { ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router';
 import DoctorWorkingHours from '@/components/DoctorWorkingHours.vue';
@@ -168,8 +178,8 @@ function getStatusText(status: number): string {
   }
 }
 
-// 修改获取未完成预约的函数
-const fetchUnfinishedAppointments = async () => {
+// 修改获取预约的函数
+const fetchAppointments = async () => {
   try {
     if (!doctorData.value?.doctorId) {
       console.error('医生ID未找到');
@@ -177,7 +187,9 @@ const fetchUnfinishedAppointments = async () => {
     }
     
     console.log("正在获取医生ID为", doctorData.value.doctorId, "的未完成预约");
-    const data = await getUnFinishedByDoctor(doctorData.value.doctorId);
+    var unFinishedData = await getUnFinishedByDoctor(doctorData.value.doctorId);
+    var finishedData = await getFinishedByDoctor(doctorData.value.doctorId);
+    const data = unFinishedData.concat(finishedData)
     console.log(data)
     // 重置预约数���
     appointments.value = {};
@@ -193,10 +205,10 @@ const fetchUnfinishedAppointments = async () => {
       });
       console.log('成功获取预约数据:', appointments.value);
     } else {
-      console.log('没有未完成的预约');
+      console.log('没有预约');
     }
   } catch (error) {
-    console.error("获取未完成预约失败:", error);
+    console.error("获取预约失败:", error);
     ElMessage.error('获取预约数据失败');
   }
 };
@@ -210,7 +222,7 @@ onMounted(async () => {
       if (doctorData.value && doctorData.value.doctorId) {
         currentDoctorId.value = doctorData.value.doctorId.toString();
         setTimeout(() => {
-          fetchUnfinishedAppointments();
+          fetchAppointments();
         }, 100);
       } else {
         throw new Error('医生ID不存在');
@@ -229,7 +241,7 @@ onMounted(async () => {
 
 // 添加刷新预约数据的方法
 const refreshAppointments = async () => {
-  await fetchUnfinishedAppointments();
+  await fetchAppointments();
 };
 
 const selectedDate = ref(new Date());
@@ -305,6 +317,13 @@ const showWorkingHours = async () => {
 };
 
 // 修改 el-menu-item 的点击事件
+const clickFinished = (appointment) => {
+  markAsFinished(appointment.appointmentId);
+}
+
+const getUnFinishedNum = (appointments): number => {
+  return appointments.filter(appointment => appointment.status === 0).length;
+}
 </script>
 
 <style scoped>
