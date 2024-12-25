@@ -16,6 +16,7 @@ const doctorLogin = () => import('../views/doctor/doctorLogin.vue')
 const managerLogin = () => import('../views/manager/managerLogin.vue')
 const WorkTimeManagement = () => import('@/views/manager/WorkTimeManagement.vue')
 const NoticeManagement = () => import('@/views/manager/NoticeManagement.vue')
+const AIChatView = () => import('@/views/patient/AIChatView/index.vue')
 const routers = [
     {
         path: '/',
