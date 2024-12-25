@@ -305,7 +305,7 @@ const confirmAppointment = async () => {
           return;
         }
 
-        // 获取选中时段的开始时间并加1秒
+        // 获取选中时段的开始时间并加59秒
         const baseTime = appointmentPeriod.value === 'morning' ? 
           selectedSchedule.value.morning.split('-')[0] : 
           selectedSchedule.value.afternoon.split('-')[0];
@@ -315,7 +315,7 @@ const confirmAppointment = async () => {
         
         // 创建一个日期对象来处理时间
         const timeObj = new Date();
-        timeObj.setHours(hours, minutes, 1); // 设置小时、分钟，并将秒数设为1
+        timeObj.setHours(hours, minutes, 59); // 设置小时、分钟，并将秒数设为59
         
         // 格式化时间，确保两位数格式
         const formattedTime = `${String(timeObj.getHours()).padStart(2, '0')}:${
@@ -334,7 +334,7 @@ const confirmAppointment = async () => {
         // 发送预约请求
         const response = await createAppointment(appointmentData);
         
-        if (response && response.data) {
+        if (response ) {
           ElMessage.success('预约成功');
           appointmentIdDialogVisible.value = false;
           showTimeDialog.value = false;
